@@ -117,33 +117,32 @@ where
     E: core::fmt::Debug,
 {
     /// Create a new TLV493D instance
-    pub fn new(i2c: I2c, addr: u8, mode: Mode) -> Result<Self, Error<E>> {
+    pub fn new(i2c: I2c, addr: u8) -> Result<Self, Error<E>> {
         debug!("New Tlv493d with address: 0x{:02x}", addr);
         
         // Construct object
-        let mut s = Self {
+        Ok(Self {
             i2c, addr, initial: [0u8; 10], last_frm: 0xff, _e: PhantomData,
-        };
+        })
+    }
 
+    pub fn init(&mut self, mode: Mode) -> Result<(), Error<E>> {
         // Startup per fig. 5.1 in TLV493D-A1B6 user manual
 
         // Write recovery value
-        s.i2c.write(s.addr, &[0xFF]).map_err(Error::I2c)?;
+        self.i2c.write(self.addr, &[0xFF]).map_err(Error::I2c)?;
 
         // Send reset command
         // TODO: this does not appear to work?
-        s.i2c.write(s.addr, &[0x00]).map_err(Error::I2c)?;
-       
-        // Read initial bitmap from device
-        let _ = s.i2c.read(s.addr, &mut s.initial[..]).map_err(Error::I2c)?;
+        self.i2c.write(self.addr, &[0x00]).map_err(Error::I2c)?;
 
-        debug!("initial read: {:02x?}", s.initial);
+        // Read initial bitmap from device
+        let _ = self.i2c.read(self.addr, &mut self.initial[..]).map_err(Error::I2c)?;
+
+        debug!("initial read: {:02x?}", self.initial);
 
         // Set mode
-        s.configure(mode)?;
-
-        // Return object
-        Ok(s)
+        self.configure(mode)
     }
 
     pub fn configure(&mut self, mode: Mode) -> Result<(), Error<E>> {

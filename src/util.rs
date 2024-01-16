@@ -54,7 +54,8 @@ fn main() -> Result<(), anyhow::Error> {
     let i2c = I2cdev::new(opts.i2c_dev)?;
 
     // Create sensor
-    let mut sensor = Tlv493d::new(i2c, opts.i2c_addr, Mode::Master)?;
+    let mut sensor = Tlv493d::new(i2c, opts.i2c_addr)?;
+    sensor.init(Mode::Master)?;
 
     // Setup exit handler
     let r = running.clone();
