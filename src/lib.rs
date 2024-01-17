@@ -56,10 +56,10 @@ pub enum WriteRegisters {
 /// TLV493D Measurement values
 #[derive(Debug, PartialEq, Clone)]
 pub struct Values {
-    x: f32,     // X axis magnetic flux (mT)
-    y: f32,     // Y axis magnetic flux (mT)
-    z: f32,     // Z axis magnetic flux (mT)
-    temp: f32,  // Device temperature (C)
+    pub x: f32,     // X axis magnetic flux (mT)
+    pub y: f32,     // Y axis magnetic flux (mT)
+    pub z: f32,     // Z axis magnetic flux (mT)
+    pub temp: f32,  // Device temperature (C)
 }
 
 /// Device operating mode
