@@ -68,7 +68,9 @@ pub enum Mode {
     Disabled,       // Reading disabled
     Master,         // Master initiated mode (reading occurs after readout)
     Fast,           // Fast mode (3.3kHz)
+    FastNoIrq,      // Fast mode (3.3kHz) without IRQs
     LowPower,       // Low power mode (100Hz)
+    LowPowerNoIrq,  // Low power mode (100Hz) without IRQs
     UltraLowPower,  // Ultra low power mode (10Hz)
 }
 
@@ -155,12 +157,15 @@ where
         // Clear mode flags
         m1.remove(Mode1::PARITY);
         m1.remove(Mode1::FAST | Mode1::LOW);
+        m1.remove(Mode1::IRQ_EN);
 
         match mode {
             Mode::Disabled => (),
             Mode::Master            => m1 |= Mode1::FAST | Mode1::LOW,
             Mode::Fast              => m1 |= Mode1::FAST | Mode1::IRQ_EN,
+            Mode::FastNoIrq         => m1 |= Mode1::FAST,
             Mode::LowPower          => m1 |= Mode1::LOW | Mode1::IRQ_EN,
+            Mode::LowPowerNoIrq     => m1 |= Mode1::LOW,
             Mode::UltraLowPower     => m1 |= Mode1::IRQ_EN,
         }
 
